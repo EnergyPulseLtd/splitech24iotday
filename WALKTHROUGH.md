@@ -6,6 +6,19 @@ various devices into one single database from where it can be analyzed, interpre
 
 ## The firmware
 
+As a first step in working with any microcontroller, we need to make sure our that it works
+correctly and we can read data from it without connecting to any external resources, such as a
+database.
+
+This can easily be done by printing out on the serial console some string. A serial console is a
+simple method to show information that is being sent by the microcontroller over the USB cable.
+
+To do this, we can just use the code that already exists in the `Firmware.ino` file. It will begin
+the serial communication and print every second a greeting message.
+
+Once we've asserted that it works correctly, we can move on to the next part which is planning out
+and implementing our firmware which will send informationg gathered from sensors to the database.
+
 For easiest workflow, we've prepared for you code snippets which can be easily copied and further
 modified in order to create firmware for the ESP32 development boards. Each segment of the code
 could be represented by one state in the state diagram below.
@@ -181,4 +194,63 @@ void setup() {
 
 
 ```c++
+void loop() {
+  loop_start = millis();
+
+  if (wifiMulti.run() != WL_CONNECTED) {
+    Serial.println("Not connected to WiFi!");
+    delay(1000);
+    return;
+  }
+
+  pointDevice.clearFields();
+  timesPointDevice.clearFields();
+
+  start_reading = millis();
+
+  double aht20temp = (double) AHT20.readTemperature();
+  Serial.println(aht20temp);
+  pointDevice.addField("aht20temperature", aht20temp);
+  // TODO: Implement reading and adding a field for sensor values, for each
+  //       other value that is being recorded.
+  //       Functions for reading those values are:
+  //         AHT20.readHumidity()
+  //         bmp.readTemperature()
+  //         bmp.readPressure()
+  //         bmp.readAltitude()
+  //
+  //       We recommend using and modifying the previously implemented
+  //       functionality on lines 192 and 193.
+
+  start_sending = millis();
+
+  if (!client.writePoint(pointDevice)) {
+    Serial.print("InfluxDB write failed: ");
+    Serial.println(client.getLastErrorMessage());
+  }
+
+  iteration_complete = millis();
+
+  Serial.print(start_sending - start_reading);
+  Serial.print(",");
+  Serial.println(iteration_complete - start_sending);
+
+  iteration_count++;
+
+  timesPointDevice.addField("rssi", WiFi.RSSI());
+  timesPointDevice.addField("read", start_calculating - start_reading);
+  timesPointDevice.addField("calc", start_sending - start_calculating);
+  timesPointDevice.addField("send", iteration_complete - start_sending);
+
+  if (!client.writePoint(timesPointDevice)) {
+    Serial.print("InfluxDB write failed: ");
+    Serial.println(client.getLastErrorMessage());
+  }
+
+  loop_end = millis();
+
+  if (loop_end - loop_start < DELAY_BEFORE) {
+    delay(DELAY_BEFORE - (loop_end - loop_start));
+  }
+}
 ```
