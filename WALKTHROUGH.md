@@ -219,8 +219,8 @@ void loop() {
   //         bmp.readPressure()
   //         bmp.readAltitude()
   //
-  //       We recommend using and modifying the previously implemented
-  //       functionality on lines 192 and 193.
+  //       We recommend using and modifying the previously implemented (above
+  //       this comment section).
 
   start_sending = millis();
 
