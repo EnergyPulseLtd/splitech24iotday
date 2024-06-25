@@ -310,3 +310,38 @@ void loop() {
   }
 }
 ```
+
+### Configuring connection parameters
+
+As our last step in implementing firmware, we need to configure the connection parameters for WiFi
+access point and for the InfluxDB.
+
+This is done in a separate file called `config.h`. This is a convention for configuring firmwares,
+keep configurations in a separate file and the logic for the firmware in a main file.
+
+The following code snipped can be placed in the configuration file.
+
+First we configure the SSID and PASS parameters which are the access point name (`IoTWorkshop`) and
+access point password (`SpliTech2024`).
+
+Second part is configuration for the InfluxDB datbase. We need to configure the database url which
+is `http://192.168.0.10:8086` and database name, username and password are all the same, `userXX`
+where `XX` is the number you've been assigned during the workshop.
+
+We're also defining tag content here but also delay between each data point. These values can be
+left as is, but you can also play around with them.
+
+```c++
+#define WIFI1_SSID "access point name"
+#define WIFI1_PASS "access point password"
+
+#define INFLUXDB_URL "database address"
+#define INFLUXDB_NAME "database name"
+#define INFLUXDB_USER "database user"
+#define INFLUXDB_PASS "database password"
+
+#define INFLUXDB_TAG_DEVICE "esp32iottest"
+#define INFLUXDB_TAG_SENSOR_LIST "aht20,bmp280"
+
+#define DELAY_BEFORE 1000
+```
