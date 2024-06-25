@@ -191,6 +191,51 @@ void setup() {
 
 ### Data gathering and sending loop function
 
+#### Simple begining
+
+Once we've set everything up in our firmware code, we can focus on gathering the data from sensors
+in the loop function. For a simple start, we'll just read the temperature from the AHT20 sensor and
+print it out on the serial console. The, the microcontroller will sleep for 1 second and as the
+function finishes executing, it will start again and repeat the whole process.
+
+```c++
+void loop() {
+  double aht20temp = (double) AHT20.readTemperature();
+  Serial.print("AHT20 Temperature: ");
+  Serial.println(aht20temp);
+  delay(1000);
+}
+```
+
+#### Now send it to the database
+
+As we've made sure that reading the sensor values works, we can implement the code that will do the
+whole logic of the gathering data, preparing thte data point and insert it into the database.
+
+The first step is to record the current clock time on ESP32 at the start of the loop function. This
+will later help us calculate how much time it takes for each segment of code to execute. At the end,
+we will record that information too into the database.
+
+Second, we need to check whether we're still connected to the WiFi access point. Devices can for
+various reasons lose connection at some point, so we need to make sure we're still connected to the
+network in order to send data to the database.
+
+Now that we can safetly proceed with gathering data, we'll need to clear all fields from the
+datapoint in order to later set new field values and record them in the database.
+
+Before actually reading the data, we need to record current clock time so we can later precisely
+measure time it takes to read the data. Depending on the sensor, it can be instant but it can also
+take some time.
+
+Right after the data is read, we will add it as a field in the data point.
+
+__This is where you come in!__
+
+We want to also read other values available from the sensors, save them in variables and add them as
+fields in the data point object. Instructions for reading additional data and adding it as fields
+can be found in the comment in code below.
+
+_WIP_
 
 
 ```c++
@@ -209,7 +254,6 @@ void loop() {
   start_reading = millis();
 
   double aht20temp = (double) AHT20.readTemperature();
-  Serial.println(aht20temp);
   pointDevice.addField("aht20temperature", aht20temp);
   // TODO: Implement reading and adding a field for sensor values, for each
   //       other value that is being recorded.
