@@ -235,7 +235,24 @@ We want to also read other values available from the sensors, save them in varia
 fields in the data point object. Instructions for reading additional data and adding it as fields
 can be found in the comment in code below.
 
-_WIP_
+Once we've gathered all the information from sensors and added them as fields in our data point,
+we are recording the clock time again so we later know how much time it took to read the information
+and after that, to send it.
+
+As a final step in the process of reading and sending sensor values, we're using the InfluxDB client
+library to send the data point we've just populated. When that is done, we can record the clock time
+again to precisely calculate the time required for the whole process and we're also incrementing the
+iteration counter to distinguish between various iterations.
+
+We're then populating the times data point with the calculated times and send that data point to the
+database too.
+
+As a final step, we need to wait 1 second to start the iteration again, but there is a small catch.
+If we wait for 1 second, and the whole process of reading and sending data takes for example 700
+milliseconds, in total the data points would be 1.7 seconds between each other, which is much closer
+to 2 seconds than one second and that would add up in the long run. For that reason we're
+subtracting how much time i took to read and send data from that one second and we wait for that
+amount of time.
 
 
 ```c++
@@ -274,11 +291,6 @@ void loop() {
   }
 
   iteration_complete = millis();
-
-  Serial.print(start_sending - start_reading);
-  Serial.print(",");
-  Serial.println(iteration_complete - start_sending);
-
   iteration_count++;
 
   timesPointDevice.addField("rssi", WiFi.RSSI());
