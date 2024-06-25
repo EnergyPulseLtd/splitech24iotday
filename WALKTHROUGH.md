@@ -345,3 +345,86 @@ left as is, but you can also play around with them.
 
 #define DELAY_BEFORE 1000
 ```
+
+## Setting up Grafana
+
+Once we start sending data to the database, we want to query it and visualise it on some
+visualisation too. It can be either a custom application or an already existing too for that
+purpose. The industry standard tool for visualising data from various data sources, especially time
+series databases is Grafana.
+
+### Configuring the connection parameters
+
+To start working with Grafana on this workshop, we first need to be connected to the same network it
+is hosted on, which is `IoTWorkshop`. Just connect to the WiFi network on your workshop computers
+with the same password used in the configuration parameters in firmware, `SpliTech2024`.
+
+Once that is done, we can connect to the Grafana web interface by opening
+[http://192.168.0.10:3000](http://192.168.0.10:3000). There you can log into your specific user by
+typing in the username and password which are both `userXX` where `XX` is the number you've been
+assigned during the workshop.
+
+There you will be greeted with a home screen for Grafana and a menu where you can navigate through
+its interface.
+
+![Grafana home screen and menu](./images/grafana_menu.png)
+
+We will now need to add a data source for visualisation, which in our case is the InfluxDB where all
+our sensor values are being recorded.
+
+Navigate in the menu to the connections section and then to the data sources page. There you can
+click on the "Add data source" button from where we can select our data source and configure it.
+
+![Grafana data source page](./images/grafana_data_source.png)
+
+When prompted with the data sources list, click on InfluxDB. There you will see a form with database
+connection parameters (similar to ones we've configured in the firmware).
+
+![Grafana data source list](./images/grafana_data_source_list.png)
+
+The important parameters that need to be configured are the HTTP URL which in case of Grafana can be
+set to `http://localhost:8086` because it is located on the same server as the database.
+
+All of the authentication options should be unchecked.
+
+Finally, we're configuring the database parameters where you need to put in the name of the database
+you're connecting to, username for that database and the password. All of those options are the same
+and are `userXX`, where `XX` is the number you've been assigned during the workshop.
+
+The HTTP method needs to be set to `GET`.
+
+Once done, click on the "Save & test" button which will save the parameters and validate the
+connection.
+
+In the image below, the connection parameters are not the same for your case, since you will have
+a different database name and login parameters.
+
+![Grafana database parameters](./images/grafana_data_source_config_after.png)
+
+Now we're officially ready to visualise and analyze information stored in the database.
+
+### Creating dashboards
+
+To visualise the information from the database, we need to create dashboards. They are panels where
+we can place various graphs for which data is queried from the database.
+
+To do that, open the Grafana menu, go to the dashboards page and create a new dashboard. By clicking
+on the "Add visualization" button, we can add a new visualisation. You will be prompted with a
+window for selecting the data source for that visualisation. Here you will pick the data source
+you've created (the InfluxDB data source).
+
+Once that is done, you will see a page where in the top part an empty panel is displayed (our
+visualisation will be displayed there) and in the bottom part a query builder for the visualisation.
+There you will select the measurement you want to query (our sensor data is located in the `sensors`
+measurement) and the filed (second row, besides the SELECT statement) which is the value want to
+plot on the dashboard.
+
+On the right side, at the top of the properties menu, you can select the visualisation type used for
+this visualisation. The default one is "Time series" (a line graph) but it can be various outher
+visualisation types.
+
+![Grafana visualisation panel](./images/grafana_visualisations_panel.png)
+
+For an inspiration, you can check out a dashboard we've created.
+
+![Grafana dashboard inspiration](./images/grafana_result.png)
