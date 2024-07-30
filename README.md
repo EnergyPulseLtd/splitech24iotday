@@ -72,7 +72,7 @@ More about the project could be found in the paper:
 The PCB design overview, developed for the workshop, is shown below. Feel free to refer to the
 [paper]() to familiarise yourself with the concept, PCB schematic and the module-related datasheets.
 
-![PCB design overview]()
+![PCB design overview](./images/pcb_3d_view.png)
 
 ## PCB assembly
 
