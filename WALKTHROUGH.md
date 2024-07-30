@@ -229,7 +229,7 @@ take some time.
 
 Right after the data is read, we will add it as a field in the data point.
 
-__This is where you come in!__
+**This is where you come in!**
 
 We want to also read other values available from the sensors, save them in variables and add them as
 fields in the data point object. Instructions for reading additional data and adding it as fields
@@ -253,7 +253,6 @@ milliseconds, in total the data points would be 1.7 seconds between each other, 
 to 2 seconds than one second and that would add up in the long run. For that reason we're
 subtracting how much time i took to read and send data from that one second and we wait for that
 amount of time.
-
 
 ```c++
 void loop() {
